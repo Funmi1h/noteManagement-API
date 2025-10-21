@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyDiary</title>
+    <link rel="stylesheet" href="css/diary.css">
+</head>
+<body>
+    <p>Vos notes personnels</p>
+    <nav>
+        <button class="btnPersonnalize">Personnaliser votre theme</button>
+        <button class="btnCloseTheme">Close</button>
+        <div class="themes">
+            <img src="./images/themes/theme1.jpg" alt="theme1" class="theme1">
+            <img src="./images/themes/theme2.jpg" alt="theme2" class="theme2">
+            <img src="./images/themes/theme3.jpg" alt="theme3" class="theme3">
+            <img src="./images/themes/theme4.jpg" alt="theme4" class="theme4">
+
+        </div>
+        
+
+    </nav>
+    <button  id="btn-deconnexion">Se déconnecter</button>
+    <div class="notes-container">
+          
+    </div>
+    <form class="formAddNote" method="post">
+        <input type="date" name="dateCreation" id="" disabled > <!--Rendre l'input de la date inactif car prérempli-->
+        <input type="text" placeholder="Titre..." name="titre">
+        <textarea  placeholder="Ecrivez en plus ici" name="contenu"></textarea>
+
+    </form>
+
+    <button id="addNote">Ajouter</button>
+ 
+<script src="./js/diary.js"></script>
+</body>
+</html>

@@ -11,7 +11,7 @@ exports.createNote =  (req, res, next)=>{
         .then(()=>{
             res.status(201).json({message: "Note sauvegardée"});
         })
-        .catch(()=>{
+        .catch((err)=>{
             res.status(500).json({error: err});
         })
     
@@ -72,3 +72,4 @@ exports.deleteNote = (req, res, next)=>{
             res.status(500).json({error: err})
         })
 };
+
