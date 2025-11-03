@@ -1,89 +1,71 @@
+// ====== Importations ======
 const express = require('express');
-const app = express();
-const PORT = 3000;
 const path = require('path');
 const mongoose = require('mongoose');
 const cors = require('cors');
-app.use(cors()); // ✅ Autorise toutes les origines à accéder à ton API
-
-
 require('dotenv').config();
 
+const app = express();
+const PORT = 3000;
 
-// POLITIQUE CSP (Recommandé pour la robustesse en dev)
+// ====== Sécurité et Middleware ======
+
+// Autorise toutes les origines (CORS)
+app.use(cors());
+
+// Analyse les requêtes JSON
+app.use(express.json());
+
+// Politique CSP (protège contre certaines attaques XSS)
 app.use((req, res, next) => {
   res.setHeader(
-    "Content-Security-Policy", 
+    "Content-Security-Policy",
     "default-src 'self'; " +
     "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; " +
-    "connect-src 'self' http://localhost:3000; " + 
-    "img-src 'self' data:;"
-);
- next();
+    "connect-src 'self' http://localhost:3000 https://cdn.jsdelivr.net; " +
+    "img-src 'self' data: https://cdn.jsdelivr.net;"
+  );
+  next();
 });
 
-
-// mise en place du middleware pour analyser le corps des requetes json
-app.use(express.json());
-// SERvir les fichiers statiques
-app.use(express.static(path.join(__dirname, '..', 'frontend')));
-
-
-//Importation des routes 
-const noteRoutes = require('./routes/noteRoute');
-const userRoutes = require('./routes/userRoute');
-
-// Enregistrer la route pur toutes les requetes efffectuées vers /notes et /auth
-  //Servir les routes frontend en premier 
-app.use('/notes', noteRoutes);
-app.use('/auth', userRoutes);
-
-
-
-app.get('/auth/login', (req, res) => {
+// Ces routes affichent directement tes pages HTML
+app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'login.html'));
 });
 
-app.get('/auth/signup', (req, res) => {
+app.get('/signup', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'signup.html'));
-});
-
-
-
-
-
-
-
-
-// Rediriger l'utilisateur non connecté vers login
-app.get('/', (req, res) => {
-  res.redirect('/auth/login');
 });
 
 app.get('/diary', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'diary.html'));
 });
 
-
-const mongoUri = process.env.MONGO_URI;
-mongoose.connect(mongoUri)
-  .then(() => {
-    console.log('Connexion à MongoDB réussie !');
-    app.listen(PORT, ()=>{
-    console.log(`Le serveur est lancé sur le port ${PORT}`)
-})
-
-  })
-  .catch((err) => {
-    console.error('Connexion à MongoDB échouée !', err.message);
+// Route par défaut → redirection vers /login
+app.get('/', (req, res) => {
+  res.redirect('/login');
 });
 
+// ====== Fichiers statiques (CSS, JS, images, etc.) ======
+app.use(express.static(path.join(__dirname, '..', 'frontend')));
 
+// Routes BACKEND
+const noteRoutes = require('./routes/noteRoute');
+const userRoutes = require('./routes/userRoute');
 
+app.use('/notes', noteRoutes);
+app.use('/auth', userRoutes);
 
+// Connexion MongoDB 
+const mongoUri = process.env.MONGO_URI;
 
-
-
-
-
-
+mongoose.connect(mongoUri)
+  .then(() => {
+    console.log('✅ Connexion à MongoDB réussie !');
+    app.listen(PORT, () => {
+      console.log(`🚀 Serveur lancé sur : http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('❌ Connexion à MongoDB échouée :', err.message);
+  });

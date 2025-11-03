@@ -16,7 +16,7 @@ const noteCtrl = require('../controllers/noteCtrl');
 // importer le middleware de auth
 const auth = require('../middleware/auth');
 
-router.post('/', noteCtrl.createNote);
+router.post('/',auth,  noteCtrl.createNote);
 
 
 //Implementation de l'endpoint GET/notes
